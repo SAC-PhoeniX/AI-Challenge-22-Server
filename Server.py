@@ -1,4 +1,5 @@
 from aiohttp import web
+import tensorflow as tf
 
 from ai.team import Team
 from config import read_config
