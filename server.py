@@ -1,6 +1,6 @@
 from aiohttp import web
-
-NO_TF = env.MODELS == "no_tf"
+from os import environ
+NO_TF = environ.get("MODELS", "TF") == "NO_TF"
 if not NO_TF:
     import tensorflow as tf
 

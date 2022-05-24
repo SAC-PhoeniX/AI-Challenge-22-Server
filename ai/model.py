@@ -1,4 +1,5 @@
-NO_TF = env.MODELS == "no_tf"
+from os import environ
+NO_TF = environ.get("MODELS", "") == "NO_TF"
 if not NO_TF:
     import numpy as np
     import tensorflow as tf
@@ -9,8 +10,6 @@ ADJECTIVES = ["Fast", "Jetting", "Quick", "Agile", "Stable", "Derpy", "Distracte
 NOUNS = ["Driver", "Model", "Getaway Driver", "AI", "Xenial", "Agent"]
 
 class Model:
-    model
-
     def __init__(self, filename, name):
         if not name:
             name = choice(ADJECTIVES) + " " + choice(NOUNS)
