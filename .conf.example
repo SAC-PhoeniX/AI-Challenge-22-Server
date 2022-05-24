@@ -1,3 +1,6 @@
-CAR TEAM_NAME:team1car1.h5
-CAR TEAM_NAME:team1car2.h5
-CAR TEAM2_NAME:team2car1.h5
+TEAM TEAM1_NAME:Red:The first team in the example config file. Has two controller models.
+CAR TEAM1_NAME:team1car1.h5:
+CAR TEAM1_NAME:team1car2.h5:Falcon 9
+
+TEAM TEAM2_NAME:Blue:A second team that didn't provide a second model
+CAR TEAM2_NAME:team2car1.h5:Şahin

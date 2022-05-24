@@ -6,7 +6,11 @@ from config import read_config
 from routes import team_routes
 
 config = read_config(".conf")
-teams = [Team(team_name, models) for team_name, models in config["TEAMS"].items()]
+teams = [
+            Team(name,info["color"],info["details"],info["models"])
+            for name, info
+            in config["TEAMS"].items()
+        ]
 
 
 app = web.Application()

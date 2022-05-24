@@ -45,9 +45,10 @@ def team_routes(t: List[Team]) -> web.RouteTableDef:
             raise web.HTTPBadRequest("Bad car ID")
         car_id = int(car_id)
 
-        
-
         print(f"asked for car #{car_id} of team {team_name}")
-        raise web.HTTPNotImplemented()
+        
+        
+        inp = (await request.post()).get("rays")
+        return web.json_response(team.infer_car(inp, car_id))
 
     return routes

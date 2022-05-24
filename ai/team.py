@@ -1,51 +1,51 @@
 from typing import List
 import uuid
-import numpy as np
-import tensorflow as tf
-from tensorflow import keras
+from aiohttp import web
+from ai.model import Model
 
 class Team:
     team_name: str
-    models = []
+    models: [Model] = []
     id: uuid.UUID
 
-    def __init__(self, team_name: str, model_filenames: List[str]) -> None:
+    color: str
+    details: str
+
+    def __init__(self, team_name: str, color: str, details: str, models_info) -> None:
         self.team_name = team_name
-        self.models = [Team.load_model(mf) for mf in model_filenames]
+        self.color = color
+        self.details = details
+
+        self.models = [
+                Model( mi["model_file"], mi.get("name", ""))
+                for mi
+                in models_info
+            ]
         self.id = uuid.uuid4()
+
         pass
 
-    def infer_car(self, input, car_id):
-        return self.infer_car(input) if car_id == 0 else self.infer_car2(input)
+    def infer_car(self, inp, car_id):
+        raise web.HTTPNotImplemented()
+        return self.infer_car0(inp) if car_id == 0 else self.infer_car1(inp)
 
-    def infer_car(self, input):
-        return Team.infer(self.models[0], input)
+    def infer_car0(self, inp):
+        return Team.infer(self.models[0], inp)
 
-    def infer_car2(self, input):
+    def infer_car1(self, inp):
         if len(self.models) > 1:
-            return Team.infer(self.models[1], input)
+            return Team.infer(self.models[1], inp)
         else:
-            return self.infer_car(input)
+            return self.infer_car0(inp)
 
     def serialize(self):
         return {
             "name": self.team_name,
             "id": self.id.hex,
-            "hasTwoModels": len(self.models) > 1
+            "color": self.color,
+            "details": self.details,
+            "hasTwoModels": len(self.models) > 1,
+            "models": [dict(**model.serialize(), id=i) for i, model in enumerate(self.models)]
         }
 
-
-    @staticmethod
-    def load_model(model_filename):
-        # return keras.models.load_model(f"/nets/{model_filename}")
-        return model_filename
         
-        
-
-    @staticmethod
-    def infer(model: keras.Model, input):
-        # return model.predict(input)
-        return 0
-
-
-
