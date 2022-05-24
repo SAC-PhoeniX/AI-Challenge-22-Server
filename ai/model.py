@@ -22,7 +22,7 @@ class Model:
     def load_model(model_filename):
         # return keras.models.Sequential(name="testModel")
         if NO_TF:
-            return MockModel
+            return MockModel(model_filename)
         else:
             return keras.models.load_model(f"nets/{model_filename}")
 
