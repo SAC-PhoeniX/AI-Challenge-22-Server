@@ -1,5 +1,8 @@
 from aiohttp import web
-import tensorflow as tf
+
+NO_TF = env.MODELS == "no_tf"
+if not NO_TF:
+    import tensorflow as tf
 
 from ai.team import Team
 from config import read_config
