@@ -162,3 +162,5 @@ cython_debug/
 # Unique to this project
 nets/*
 .conf
+
+.vscode
