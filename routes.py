@@ -35,10 +35,10 @@ def team_routes(t: List[Team]) -> web.RouteTableDef:
             [team.serialize() for team in TEAMS if team.id == id], dumps=dump_utf8
         )
 
-    @routes.post("/infer/{team_name}/{car_id}")
+    @routes.post("/infer/{team_id}/{car_id}")
     async def infer(request: Request):
-        team_name = request.match_info["team_name"]
-        found_teams = [team for team in TEAMS if team.team_name == team_name]
+        team_name = request.match_info["team_id"]
+        found_teams = [team for team in TEAMS if team.id == team_name]
         if len(found_teams) != 1:
             raise web.HTTPBadRequest()
         team = found_teams[0]
