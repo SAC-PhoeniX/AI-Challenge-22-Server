@@ -40,12 +40,12 @@ def team_routes(t: List[Team]) -> web.RouteTableDef:
         team_name = request.match_info["team_name"]
         found_teams = [team for team in TEAMS if team.team_name == team_name]
         if len(found_teams) != 1:
-            raise web.HTTPBadRequest("Team not found")
+            raise web.HTTPBadRequest()
         team = found_teams[0]
 
         car_id = request.match_info["car_id"]
         if car_id != "0" and car_id != "1":
-            raise web.HTTPBadRequest("Bad car ID")
+            raise web.HTTPBadRequest()
         car_id = int(car_id)
 
         print(f"asked for car #{car_id} of team {team_name}")
