@@ -2,9 +2,12 @@ from typing import List
 import uuid
 from aiohttp import web
 from aiohttp.web import Request
+import json
 
 from ai.team import Team
 
+def dump_utf8(data, **kwargs):
+    return json.dumps(data, **kwargs, ensure_ascii=False)
 
 def team_routes(t: List[Team]) -> web.RouteTableDef:
     TEAMS = t
@@ -16,20 +19,20 @@ def team_routes(t: List[Team]) -> web.RouteTableDef:
         return web.json_response({
             "count": len(TEAMS),
             "teams": [team.serialize() for team in TEAMS]
-        })
+        }, dumps=dump_utf8)
 
     @routes.get("/team/name/{name}")
     async def team(request: Request):
         name = request.match_info["name"]
         return web.json_response(
-            [team.serialize() for team in TEAMS if team.team_name == name]
+            [team.serialize() for team in TEAMS if team.team_name == name], dumps=dump_utf8
         )
 
     @routes.get("/team/id/{id}")
     async def team(request: Request):
         id = uuid.UUID(request.match_info["id"])
         return web.json_response(
-            [team.serialize() for team in TEAMS if team.id == id]
+            [team.serialize() for team in TEAMS if team.id == id], dumps=dump_utf8
         )
 
     @routes.post("/infer/{team_name}/{car_id}")
@@ -49,6 +52,6 @@ def team_routes(t: List[Team]) -> web.RouteTableDef:
         
         
         inp = (await request.post()).get("rays")
-        return web.json_response(team.infer_car(inp, car_id))
+        return web.json_response(team.infer_car(inp, car_id), dumps=dump_utf8)
 
     return routes
