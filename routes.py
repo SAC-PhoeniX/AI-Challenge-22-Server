@@ -9,8 +9,7 @@ from ai.team import Team
 def dump_utf8(data, **kwargs):
     return json.dumps(data, **kwargs, ensure_ascii=False)
 
-def team_routes(t: List[Team]) -> web.RouteTableDef:
-    TEAMS = t
+def team_routes(TEAMS: List[Team]) -> web.RouteTableDef:
 
     routes = web.RouteTableDef()
 
