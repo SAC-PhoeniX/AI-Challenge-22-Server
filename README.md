@@ -10,8 +10,9 @@ This uses the latest (?) versions of:
 with Python 3
 
 ## Running
-1. Make a copy of example.conf and enter team names and models like in the example 
-2. Run `server.py`
+1. Make a copy of example.conf and enter team names and models like in the example
+2. Run `conda env create -f environment.yml` to download the requirements
+3. Run `server.py`
 
 ### Running without TensorFlow
 
@@ -19,10 +20,14 @@ If you need to run the server to test the endpoints, you can set the `MODELS` en
 
 on Linux/OSX:
 ```bash
-MODELS=NO_TF; python server.py
+MODELS=NO_TF python server.py
 ```
 
-on Windows:
+on Windows in [PowerShell](https://stackoverflow.com/questions/1420719/powershell-setting-an-environment-variable-for-a-single-command-only):
 ```powershell
-set MODELS=NO_TF && python server.py & set MODELS=
+$env:MODELS='NO_TF'
+python server.py
+
+# do after testing:
+$env:MODELS="TF"
 ```
