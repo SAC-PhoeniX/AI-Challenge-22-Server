@@ -36,8 +36,8 @@ def team_routes(TEAMS: List[Team]) -> web.RouteTableDef:
 
     @routes.post("/infer/{team_id}/{car_id}")
     async def infer(request: Request):
-        team_name = request.match_info["team_id"]
-        found_teams = [team for team in TEAMS if team.id == team_name]
+        team_id = request.match_info["team_id"]
+        found_teams = [team for team in TEAMS if team.id.hex == team_id]
         if len(found_teams) != 1:
             raise web.HTTPBadRequest()
         team = found_teams[0]
@@ -47,7 +47,7 @@ def team_routes(TEAMS: List[Team]) -> web.RouteTableDef:
             raise web.HTTPBadRequest()
         car_id = int(car_id)
 
-        print(f"asked for car #{car_id} of team {team_name}")
+        print(f"asked for car #{car_id} of team {team_id}")
         
         
         inp = (await request.post()).get("rays")
