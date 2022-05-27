@@ -50,7 +50,7 @@ def team_routes(TEAMS: List[Team]) -> web.RouteTableDef:
         print(f"asked for car #{car_id} of team {team_id}")
         
         
-        inp = (await request.post()).get("rays")
+        inp = (await request.json())["rays"]
         return web.json_response(team.infer_car(inp, car_id), dumps=dump_utf8)
 
     return routes

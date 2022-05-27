@@ -5,7 +5,7 @@ from ai.model import Model
 
 class Team:
     team_name: str
-    models: [Model] = []
+    models: [Model]
     id: uuid.UUID
 
     color: str
@@ -26,15 +26,14 @@ class Team:
         pass
 
     def infer_car(self, inp, car_id):
-        raise web.HTTPNotImplemented()
         return self.infer_car0(inp) if car_id == 0 else self.infer_car1(inp)
 
     def infer_car0(self, inp):
-        return Team.infer(self.models[0], inp)
+        return self.models[0].infer(inp)
 
     def infer_car1(self, inp):
         if len(self.models) > 1:
-            return Team.infer(self.models[1], inp)
+            return self.models[1].infer(inp)
         else:
             return self.infer_car0(inp)
 

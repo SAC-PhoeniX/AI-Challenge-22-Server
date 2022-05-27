@@ -36,5 +36,7 @@ class Model:
 class MockModel:
     def __init__(self, filename):
         self.name = filename
-    def predict(x):
-        return [0 for _ in range(17)]
+
+    def predict(self, inp):
+        print("predicting using " + str(self.name) + " and input " + str(inp))
+        return [0, 0]
