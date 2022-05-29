@@ -10,6 +10,8 @@ ADJECTIVES = ["Fast", "Jetting", "Quick", "Agile", "Stable", "Derpy", "Distracte
 NOUNS = ["Driver", "Model", "Getaway Driver", "AI", "Xenial", "Agent"]
 
 class Model:
+    model_cache = {}
+
     def __init__(self, filename, name):
         if not name:
             name = choice(ADJECTIVES) + " " + choice(NOUNS)
@@ -24,7 +26,10 @@ class Model:
         if NO_TF:
             return MockModel(model_filename)
         else:
-            return keras.models.load_model(f"nets/{model_filename}")
+            if model_filename not in Model.model_cache:
+                Model.model_cache[model_filename] = keras.models.load_model(f"nets/{model_filename}")
+
+            return Model.model_cache[model_filename]
 
     def infer(self, inp):
         return self.model.predict(inp)
