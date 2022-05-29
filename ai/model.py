@@ -32,7 +32,8 @@ class Model:
             return Model.model_cache[model_filename]
 
     def infer(self, inp):
-        return self.model.predict(np.array([inp]))[0,:]
+        out = self.model.predict(np.array([inp]) if not NO_TF else [inp])
+        return out[0,:].tolist() if not NO_TF else out[0]
 
     def serialize(self):
         return {"name": self.name}
@@ -44,4 +45,4 @@ class MockModel:
 
     def predict(self, inp):
         print("predicting using " + str(self.name) + " and input " + str(inp))
-        return [0, 0]
+        return [[0, 0]]
