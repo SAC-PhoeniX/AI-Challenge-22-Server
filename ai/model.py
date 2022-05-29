@@ -32,7 +32,7 @@ class Model:
             return Model.model_cache[model_filename]
 
     def infer(self, inp):
-        return self.model.predict(inp)
+        return self.model.predict(np.array([inp]))[0,:]
 
     def serialize(self):
         return {"name": self.name}
