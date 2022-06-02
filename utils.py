@@ -15,9 +15,9 @@ def read_config(filename: str) -> dict:
                     teams[team_name] = {
                         "color": args[1],
                         "details": args[2],
-                        "models": []
+                        "cars": []
                     }
-                
+
             elif line.startswith("CAR "):
                 args = line[4:].split(":")
                 if len(args) < 2: continue # TODO print error instead
@@ -29,12 +29,12 @@ def read_config(filename: str) -> dict:
                 if len(args) > 2:
                     model_name = args[2]
                     model_dict["name"] = model_name
-                
-                
+
+
                 if team_name not in teams:
-                    teams[team_name] = {"models": [model_dict]}
+                    teams[team_name] = {"cars": [model_dict]}
                 else:
-                    teams[team_name]["models"].append(model_dict)
+                    teams[team_name]["cars"].append(model_dict)
 
 
             else:
@@ -45,6 +45,10 @@ def read_config(filename: str) -> dict:
 
 
     return {"TEAMS": teams}
+
+import json
+def dump_utf8(data, **kwargs):
+    return json.dumps(data, **kwargs, ensure_ascii=False)
 
 
 if __name__ == "__main__":
