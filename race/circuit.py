@@ -12,11 +12,7 @@ class Circuit:
 
     def get_grid(self):
         return {
-            car_id: reduce(
-                lambda prev, cur: prev + 1 if cur[0] < time or (cur[0] == time and cur[1] < i) else prev, zip(self.cars.values(), count(0, 1)), 0
-            )
-            for (i, (car_id, time))
-            in zip(count(0,1), self.cars.items())
+            "cars": sorted([{"id": car_id, "time": time} for car_id, time in self.cars.items()], key=lambda el: el["time"])
         }
 
 if __name__ == "__main__":
