@@ -43,9 +43,9 @@ def get_routes(race: Race) -> web.RouteTableDef:
 
     @routes.post("/infer/cars")
     async def infer(request: Request):
-        return json_response([
+        return json_response({"cars": [
             make_infer_response(car_id, race.get_car_with_id(car_id).infer(inp)) for car_id, inp in (await request.json()).items()
-        ], dumps=dump_utf8)
+        ]}, dumps=dump_utf8)
 
     return routes
 
