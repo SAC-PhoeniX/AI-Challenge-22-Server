@@ -28,13 +28,18 @@ class Car:
 
         pass
 
-    def serialize(self) -> dict:
-        return {
+    def serialize(self, include_team) -> dict:
+        obj = {
             "name": self.name,
             "id": self.id.hex,
             "color": self.team.color,
             "team_id": self.team.id.hex
         }
+        
+        if include_team:
+            obj["team"] = self.team.serialize(False)
+
+        return obj
 
     def infer(self, inp):
         out = self.model.predict(np.array([inp]) if not NO_TF else [inp])

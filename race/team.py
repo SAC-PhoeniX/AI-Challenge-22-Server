@@ -25,12 +25,16 @@ class Team:
             raise Error("Bad car ID")
         return self.cars[car_id].infer(inp)
 
-    def serialize(self) -> dict:
-        return {
+    def serialize(self, include_cars) -> dict:
+        obj = {
             "name": self.name,
             "id": self.id.hex,
             "color": self.color,
-            "details": self.details,
-            "cars": [car.serialize() for car in self.cars]
+            "details": self.details
         }
+
+        if include_cars:
+            obj["cars"] = [car.serialize(False) for car in self.cars]
+
+        return obj
 
