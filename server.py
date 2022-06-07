@@ -6,7 +6,7 @@ if not NO_TF:
 
 from aiohttp import web
 from utils import read_config
-from routes import teams_routes, circuits_routes, infer_routes
+from routes import info_routes, circuits_routes, infer_routes
 from race import Team, Race
 
 config = read_config(".conf")
@@ -19,7 +19,7 @@ RACE = Race(teams)
 
 app = web.Application()
 app.add_routes([
-    *teams_routes(RACE),
+    *info_routes(RACE),
     *circuits_routes(RACE),
     *infer_routes(RACE)
     ])
