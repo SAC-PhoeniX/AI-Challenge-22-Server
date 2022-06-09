@@ -64,4 +64,4 @@ class MockModel():
 
     def predict(self, inp):
         print("predicting using " + str(self.name) + " and input " + str(inp))
-        return [[0, 0]]
+        return [[60, 0]]
