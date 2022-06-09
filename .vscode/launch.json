@@ -1,0 +1,44 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Python: Start Server",
+            "type": "python",
+            "request": "launch",
+            "program": "server.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Start Server (no TF)",
+            "type": "python",
+            "request": "launch",
+            "program": "server.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "MODELS": "NO_TF"
+            }
+        },
+
+        {
+            "name": "Python: Test Config",
+            "type": "python",
+            "request": "launch",
+            "program": "utils.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+
+        },
+        {
+            "name": "Python: Test Circuit",
+            "type": "python",
+            "request": "launch",
+            "program": "race/circuit.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+
+        },
+    ]
+}
