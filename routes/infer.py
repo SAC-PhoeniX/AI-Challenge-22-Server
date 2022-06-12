@@ -37,7 +37,7 @@ def get_routes(race: Race) -> web.RouteTableDef:
         try:
             car = race.get_car_with_id(i["car_id"])
             inp = (await request.json())["rays"]
-            return json_response(make_infer_response(car.id.hex, car.infer(inp)), dumps=dump_utf8)
+            return json_response(make_infer_response(car.get_id(), car.infer(inp)), dumps=dump_utf8)
         except KeyError:
             raise  web.HTTPBadRequest()
 

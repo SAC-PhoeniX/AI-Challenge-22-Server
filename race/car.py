@@ -7,33 +7,33 @@ if not NO_TF:
 
 from random import choice
 from uuid import uuid4, UUID
+from .race_object import RaceObject
 
 
 ADJECTIVES = ["Fast", "Jetting", "Quick", "Agile", "Stable", "Derpy", "Distracted"]
 NOUNS = ["Driver", "Model", "Getaway Driver", "AI", "Xenial", "Agent"]
 
 
-class Car:
+class Car(RaceObject):
 
     model_cache = {}
 
     def __init__(self, team, name: str, model_filename: str):
+        super().__init__()
         if not name:
             name = choice(ADJECTIVES) + " " + choice(NOUNS)
         self.name: str = name
         self.team: Team = team
 
         self.model = type(self).load_model(model_filename)
-        self.id = uuid4()
-
         pass
 
     def serialize(self, include_team) -> dict:
         obj = {
             "name": self.name,
-            "id": self.id.hex,
+            "id": self.get_id(),
             "color": self.team.color,
-            "team_id": self.team.id.hex
+            "team_id": self.team.get_id()
         }
         
         if include_team:

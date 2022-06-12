@@ -3,10 +3,13 @@ import uuid
 from aiohttp import web
 
 from .car import Car
+from .race_object import RaceObject
 
-class Team:
+class Team(RaceObject):
 
     def __init__(self, name, team_config):
+        super().__init__()
+
         self.name: str = name
         self.color: str = team_config["color"]
         self.details: str = team_config.get("details", "")
@@ -28,7 +31,7 @@ class Team:
     def serialize(self, include_cars) -> dict:
         obj = {
             "name": self.name,
-            "id": self.id.hex,
+            "id": self.get_id(),
             "color": self.color,
             "details": self.details
         }
