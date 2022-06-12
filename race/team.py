@@ -18,7 +18,6 @@ class Team(RaceObject):
             Car(self, car.get("name", None), car["model_file"])
             for car in team_config["cars"]
         ]
-        self.id: UUID = uuid.uuid4()
 
         pass
 
