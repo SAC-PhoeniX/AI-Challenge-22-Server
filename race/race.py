@@ -3,6 +3,7 @@ from uuid import UUID
 from .team import Team
 from .car import Car
 from .circuit import Circuit
+from .stats import Stats
 from .race_object import RaceObject
 
 
@@ -15,6 +16,7 @@ class Race(RaceObject):
         }
         self.circuits: list[Circuit] = [Circuit(i) for i in range(circuit_number)]
 
+        self.stats = Stats(self)
         
 
     def get_team_with_id(self, team_id: str) -> Team:
