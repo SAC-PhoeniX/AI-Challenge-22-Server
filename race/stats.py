@@ -81,10 +81,13 @@ class RaceStats(Subscribable):
 class QualStats(RaceStats):
     def __init__(self, race: "Race"):
         super().__init__(race)
-        self.state = {car_id: {"timer": 0, "speed": 0} for car_id in race.cars.keys()}
+        self.state = {}
 
     def update_state(self, data, car_id=None, *args, **kwargs):
-        self.state[car_id].update(data)
+        if car_id in self.state:
+            self.state[car_id].update(data)
+        else:
+            self.state[car_id] = data
 
 
 class GrandPrixStats(RaceStats):
