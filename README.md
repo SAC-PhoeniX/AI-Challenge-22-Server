@@ -10,6 +10,7 @@ This uses the latest (?) versions of:
 with Python 3
 
 ## Running
+0. Clone using `git clone --recurse-submodules https://github.com/SAC-PhoeniX/AI-Challenge-22-Server.git`
 1. Make a copy of example.conf and enter team names and models like in the example
 2. Run `conda env create -f environment.yml` to download the requirements
 3. Run `server.py`
