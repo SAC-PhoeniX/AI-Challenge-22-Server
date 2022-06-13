@@ -1,13 +1,12 @@
 from os import environ
+from random import choice
+from uuid import uuid4, UUID
+from .race_object import RaceObject
 NO_TF = environ.get("MODELS", "TF") == "NO_TF"
 if not NO_TF:
     import numpy as np
     import tensorflow as tf
     from tensorflow import keras
-
-from random import choice
-from uuid import uuid4, UUID
-from .race_object import RaceObject
 
 
 ADJECTIVES = ["Fast", "Jetting", "Quick", "Agile", "Stable", "Derpy", "Distracted"]
@@ -23,7 +22,7 @@ class Car(RaceObject):
         if not name:
             name = choice(ADJECTIVES) + " " + choice(NOUNS)
         self.name: str = name
-        self.team: Team = team
+        self.team = team
 
         self.model = type(self).load_model(model_filename)
         pass
@@ -45,8 +44,6 @@ class Car(RaceObject):
         out = self.model.predict(np.array([inp]) if not NO_TF else [inp])
         return out[0,:].tolist() if not NO_TF else out[0]
 
-
-
     @staticmethod
     def load_model(model_filename):
         if NO_TF:
@@ -58,7 +55,7 @@ class Car(RaceObject):
             return Car.model_cache[model_filename]
 
 
-class MockModel():
+class MockModel:
     def __init__(self, filename):
         self.name = filename
 
