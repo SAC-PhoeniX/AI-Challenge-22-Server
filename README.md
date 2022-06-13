@@ -10,10 +10,18 @@ This uses the latest (?) versions of:
 with Python 3
 
 ## Running
-0. Clone using `git clone --recurse-submodules https://github.com/SAC-PhoeniX/AI-Challenge-22-Server.git`
 1. Make a copy of example.conf and enter team names and models like in the example
 2. Run `conda env create -f environment.yml` to download the requirements
 3. Run `server.py`
+
+### Running with stream frontend
+If you want to serve the stream frontend as well, you will need to clone using `git clone --recurse-submodules https://github.com/SAC-PhoeniX/AI-Challenge-22-Server.git`. Before running `server.py`, do
+```sh
+$ cd AI-Challenge-22-Server/stream
+$ yarn # or: npm i .
+$ yarn build # or: npm run build
+```
+to build the frontend files. The files will be served if they are found.
 
 ### Running without TensorFlow
 
