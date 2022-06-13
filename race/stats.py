@@ -35,17 +35,17 @@ class RaceStats:
             self.subscribers.discard(q)
             self.streams.discard(response)
 
-    async def update(self, data):
+    async def update(self, car_id, data):
         # save everything that happens
-        self.log.append(data)
-        self.update_state(data)
+        self.log.append({car_id: data})
+        self.update_state(car_id, data)
         await gather(*[
-            q.put(data)
+            q.put({car_id: data})
             for q
             in self.subscribers
         ])
 
-    def update_state(self, data):
+    def update_state(self, car_id, data):
         pass
 
     async def end(self):
@@ -62,8 +62,8 @@ class QualStats(RaceStats):
         super().__init__(race)
         self.state = {car_id: {"timer": 0, "speed": 0} for car_id in race.cars.keys()}
 
-    def update_state(self, data):
-        self.state[data["car_id"]].update(data)
+    def update_state(self, car_id, data):
+        self.state[car_id].update(data)
 
 
 class GrandPrixStats(RaceStats):

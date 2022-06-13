@@ -40,7 +40,7 @@ def get_routes(race: Race) -> web.RouteTableDef:
 
     @routes.post("/telemetry/{race_type}/circuit/{circuit_id}/car/{car_id}")
     async def update_stats(req: Request):
-        s: dict[str, RaceStats]
+        s: list[RaceStats]
         if req.match_info["race_type"] == "qual":
             s = race.stats.quals
         elif req.match_info["race_type"] == "race":
@@ -48,8 +48,7 @@ def get_routes(race: Race) -> web.RouteTableDef:
         else:
             return web.HTTPBadRequest()
         data = await req.json()
-        data["car_id"] = req.match_info["car_id"]
-        await s[verify_circuit_id(race, req.match_info["circuit_id"])].update(data)
+        await s[verify_circuit_id(race, req.match_info["circuit_id"])].update(req.match_info["car_id"], data)
 
         return web.HTTPOk()
 
