@@ -17,7 +17,13 @@ teams = [
         ]
 RACE = Race(teams)
 
+
+async def clean_streams(_):
+    await RACE.stats.clean_all_streams()
+
 app = web.Application()
+app.on_shutdown.append(clean_streams)
+
 app.add_routes([
     *info_routes(RACE),
     *circuits_routes(RACE),

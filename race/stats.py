@@ -56,6 +56,15 @@ class RaceStats:
             waiters.append(stream.wait())
         await gather(*waiters)
 
+    async def clean_streams(self):
+        waiters = []
+        for stream in self.streams:
+            stream.stop_streaming()
+            waiters.append(stream.wait())
+
+        await gather(*waiters)
+        self.streams.clear()
+
 
 class QualStats(RaceStats):
     def __init__(self, race: "Race"):
@@ -81,4 +90,6 @@ class Stats:
         self.gps: list[GrandPrixStats] = [GrandPrixStats(race) for _ in race.circuits]
         pass
 
-    
+    async def clean_all_streams(self):
+        await gather(*[stats.clean_streams() for stats in self.quals], *[stats.clean_streams() for stats in self.gps])
+
