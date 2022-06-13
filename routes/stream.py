@@ -18,11 +18,11 @@ def get_routes(race: Race) -> web.RouteTableDef:
     else:
         print("Stream files not found")
 
-    @routes.get("/stream/races")
+    @routes.get("/stream/current_race")
     async def race_index(req: Request):
-        return web.json_response({
-            "races": list(race.stats.current_races.keys())
-        }, dumps=dump_utf8)
+        async with sse_response(req) as res:
+            await race.stats.subscribe(res)
+        return res
 
     @routes.get("/stream/info/{race_type}/circuit/{circuit_id}")
     async def info(req: Request):
@@ -48,8 +48,8 @@ def get_routes(race: Race) -> web.RouteTableDef:
         else:
             return web.HTTPBadRequest()
         data = await req.json()
-        await s[verify_circuit_id(race, req.match_info["circuit_id"])].update(req.match_info["car_id"], data)
-
+        await s[verify_circuit_id(race, req.match_info["circuit_id"])].update(data, req.match_info["car_id"])
+        await race.stats.update(f'/stream/info/{req.match_info["race_type"]}/circuit/{req.match_info["circuit_id"]}')
         return web.HTTPOk()
 
     return routes

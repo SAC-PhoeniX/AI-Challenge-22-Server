@@ -1,3 +1,4 @@
+import aiohttp.web
 from aiohttp_sse import EventSourceResponse
 from asyncio import Queue, gather
 from weakref import WeakSet
@@ -11,14 +12,11 @@ if TYPE_CHECKING:
     from .race import Race
 
 
-# runs when race telemetry begins
-class RaceStats:
-    def __init__(self, race: "Race"):
-        self.race = race
+class Subscribable:
+    def __init__(self):
         self.streams: WeakSet[EventSourceResponse] = WeakSet()
         self.subscribers: set[Queue] = set()
         self.state = {}
-        self.log = []
 
     # mostly stolen from https://github.com/aio-libs/aiohttp-sse/blob/master/examples/chat.py
     async def subscribe(self, response: EventSourceResponse):
@@ -26,7 +24,7 @@ class RaceStats:
         self.subscribers.add(q)
         self.streams.add(response)
         try:
-            await response.send(dump_utf8({"event": "initial", "state": self.state}))
+            await self.send_state(response)
             while not response.task.done():
                 payload = await q.get()
                 await response.send(dump_utf8(payload))
@@ -35,26 +33,20 @@ class RaceStats:
             self.subscribers.discard(q)
             self.streams.discard(response)
 
-    async def update(self, car_id, data):
-        # save everything that happens
-        self.log.append({car_id: data})
-        self.update_state(car_id, data)
+    async def send_state(self, response):
+        await response.send(dump_utf8({"event": "initial", "state": self.state}))
+
+    def update_state(self, data, *args, **kwargs):
+        self.state.update(data)
+        pass
+
+    async def update(self, data, *args, **kwargs):
+        self.update_state(data)
         await gather(*[
-            q.put({car_id: data})
+            q.put(data)
             for q
             in self.subscribers
         ])
-
-    def update_state(self, car_id, data):
-        pass
-
-    async def end(self):
-        # race ends
-        waiters = []
-        for stream in self.streams:
-            stream.stop_streaming()
-            waiters.append(stream.wait())
-        await gather(*waiters)
 
     async def clean_streams(self):
         waiters = []
@@ -66,12 +58,32 @@ class RaceStats:
         self.streams.clear()
 
 
+class RaceStats(Subscribable):
+    def __init__(self, race: "Race"):
+        super().__init__()
+        self.race = race
+        self.log = []
+
+    async def update(self, data, car_id=None, *args, **kwargs):
+        if not car_id:
+            raise aiohttp.web.HTTPBadRequest
+
+        # save everything that happens
+        self.log.append({car_id: data})
+        self.update_state(data, car_id)
+        await gather(*[
+            q.put({car_id: data})
+            for q
+            in self.subscribers
+        ])
+
+
 class QualStats(RaceStats):
     def __init__(self, race: "Race"):
         super().__init__(race)
         self.state = {car_id: {"timer": 0, "speed": 0} for car_id in race.cars.keys()}
 
-    def update_state(self, car_id, data):
+    def update_state(self, data, car_id=None, *args, **kwargs):
         self.state[car_id].update(data)
 
 
@@ -80,16 +92,31 @@ class GrandPrixStats(RaceStats):
         super().__init__(race)
         self.state = {car_id: {"finish": {}, "lap": {}, "live": {}} for car_id in race.cars.keys()}
 
-    def update_state(self, car_id, data):
+    def update_state(self, data, car_id=None, *args, **kwargs):
         self.state[car_id][data["event"]].update(data)
 
 
-class Stats:
+class Stats(Subscribable):
     def __init__(self, race: "Race"):
+        super().__init__()
         self.quals: list[QualStats] = [QualStats(race) for _ in race.circuits]
         self.gps: list[GrandPrixStats] = [GrandPrixStats(race) for _ in race.circuits]
+        self.state = ""
         pass
 
     async def clean_all_streams(self):
-        await gather(*[stats.clean_streams() for stats in self.quals], *[stats.clean_streams() for stats in self.gps])
+        await gather(
+            self.clean_streams(),
+            *[stats.clean_streams() for stats in self.quals],
+            *[stats.clean_streams() for stats in self.gps]
+        )
 
+    def update_state(self, data, *args, **kwargs):
+        self.state = data
+
+    async def send_state(self, response):
+        await response.send(self.state)
+
+    async def update(self, data, *args, **kwargs):
+        if data != self.state:
+            await super().update(data)
