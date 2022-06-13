@@ -67,7 +67,12 @@ class QualStats(RaceStats):
 
 
 class GrandPrixStats(RaceStats):
-    pass
+    def __init__(self, race: "Race"):
+        super().__init__(race)
+        self.state = {car_id: {"finish": {}, "lap": {}, "live": {}} for car_id in race.cars.keys()}
+
+    def update_state(self, car_id, data):
+        self.state[car_id][data["event"]].update(data)
 
 
 class Stats:
