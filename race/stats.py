@@ -115,7 +115,7 @@ class Stats(Subscribable):
         self.state = data
 
     async def send_state(self, response):
-        await response.send(self.state)
+        await response.send(dump_utf8(self.state))
 
     async def update(self, data, *args, **kwargs):
         if data != self.state:
